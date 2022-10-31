@@ -33,12 +33,15 @@ function setup() {
 
 function draw() {
   if (!isdrawing) {
-    // frameRate(24);
+    frameRate(10);
+    background(0, 37, 106);
+    spand = Math.random() * 50;
     textNeon(
       'Press the Space key and Play with clicking',
       width / 2,
-      height / 2,
-      color(253, 221, 42)
+      height / 2, 
+      color(255, 250, 157),
+      spand
     );
   } else {
     //background(0,37,106);
@@ -57,13 +60,11 @@ function draw() {
     }
     // We are going to draw a polygon out of the wave points
     beginShape();
-
     let level = amplitude.getLevel() * 5;
     // Iterate over horizontal pixels
     for (let x = 0; x <= width; x += 10) {
       // Calculate a y value according to noise, map to
 
-      // Option #1: 2D Noise
       let y = map(noise(xoff, level), 0, 1, waveheight, waveheight + 200); //let y = map(noise(xoff, yoff), 0, 1, 200, 300);
 
       // Set the vertex
@@ -118,11 +119,16 @@ function keyPressed() {
       //fft = new p5.FFT();
       //peakDetect = new p5.PeakDetect(2500,4000);
     }
+  }else if(keyCode === 90){
+    // keyboard Z
+
+
   }
 }
 
 function mousePressed() {
-  star2(mouseX, mouseY);
+  randomstars(mouseX, mouseY);
+  //star1(mouseX, mouseY, 2); 
   playOscillator();
 }
 
@@ -148,33 +154,26 @@ function changeWaveColor() {
   return color;
 }
 
-//startpoint change into where mouse press
-function star1(x1, y1, diameter) {
-  //x1 = windowWidth * 0.1;
-  //y1 = windowHeight * 0.1;
-  x2 = windowWidth * 0.12;
-  y2 = windowHeight * 0.12;
-  x3 = windowWidth * 0.15;
-  y3 = windowHeight * 0.07;
+//stars with line connected expand from mouse
+function star1(x, y, diameter) {
+  locationx = [x, x + 40, x + 64, x + 72, x + 68];
+  locationy = [y, y + 8, y + 24, y - 8, y - 24];
+
   stroke(251, 255, 138);
-  //stroke(255, 255, 142, 1);
-  line(x1, y1, x2, y2);
-  line(x2, y2, x3, y3);
-  circle(x1, y1, diameter * 0.5);
-  circle(x2, y2, diameter);
-  //line(x1,y1,x2,y2)
-  //stroke(stroke-color)
-  //circle(x,y,diameter)
+  for (i = 0; i < 6; i++){
+    line(locationx[i], locationy[i], locationx[i + 1], locationy[i + 1]);
+    circle(locationx[i], locationy[i], diameter);
+  }
 }
 
-
-function star2(x, y) {
+//random stars with stoke only spreading from mouse
+function randomstars(x, y) {
   let positionx = [];
   let positiony = [];
   positionx[0] = x;
   positiony[0] = y;
   stroke(251, 255, 138);
-  //set positions
+  //set 8 stars positions
   for (i = 1; i < 8; i++) {
     positionx[i] = x * Math.random();
     positiony[i] = x * Math.random();
@@ -191,7 +190,6 @@ function star2(x, y) {
 function shiningstar(x, y, diameter) {
   stroke(253, 221, 42);
   circle(x, y, diameter);
-
 }
 
 function playOscillator() {
@@ -205,18 +203,16 @@ function playOscillator() {
   osc.stop(1);
 }
 
-
-function textNeon(glowText, x, y, glowColor) {
-  glow(glowColor, 10);
+// instructions text
+function textNeon(glowText, x, y, glowColor, spand) {
+  fill(0, 0, 0)
+  glow(glowColor, spand);
   text(glowText, x, y);
-
-  glow(glowColor, 5);
-  text(glowText, x, y);
-  text(glowText, x, y);
+  glow(glowColor, 2);
   text(glowText, x, y);
 }
 
-
+// glow text
 function glow(glowColor, blurriness) {
   drawingContext.shadowBlur = blurriness;
   drawingContext.shadowColor = glowColor;
