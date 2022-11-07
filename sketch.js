@@ -7,6 +7,9 @@ let waveheight = 200;
 let wavecolor;
 let osc;
 let freq;
+let spand = 1;
+
+//TODO nicer UI
 
 function preload() {
   song = loadSound('source/The Christmas song.mp4');
@@ -24,6 +27,7 @@ function setup() {
   wavecolor = color(0, 37, 106);
   //cnv.mousePressed(playOscillator);
   osc = new p5.Oscillator('sine');
+  let spand = 0.1;
 
   //pause text
   //textFont(font);
@@ -33,17 +37,23 @@ function setup() {
 
 function draw() {
   if (!isdrawing) {
+    // TODO change instructions style
     frameRate(10);
     background(0, 37, 106);
-    spand = Math.random() * 50;
+    if(spand > 50){
+      spand = 1;
+    }else{
+      spand = spand += 5;
+    }
     textNeon(
       'Press the Space key and Play with clicking',
       width / 2,
-      height / 2, 
+      height / 2,
       color(255, 250, 157),
       spand
     );
   } else {
+    frameRate(24);
     //background(0,37,106);
     let xoff = 0;
     fill(wavecolor);
@@ -54,7 +64,7 @@ function draw() {
     fft.analyze();
     peakDetect.update(fft);
     if (peakDetect.isDetected) {
-      console.log('peak');
+      //console.log('peak');
       wavecolor = changeWaveColor();
       changeHeight();
     }
@@ -119,7 +129,7 @@ function keyPressed() {
       //fft = new p5.FFT();
       //peakDetect = new p5.PeakDetect(2500,4000);
     }
-  }else if(keyCode === 90){
+  } else if (keyCode === 90) {
     // keyboard Z
 
 
@@ -140,6 +150,7 @@ function mousePressed() {
 //   }
 // }
 
+//TODO comes back up when it reaches the bottom
 //change mapping height of waves
 function changeHeight() {
   waveheight += 20;
@@ -154,13 +165,14 @@ function changeWaveColor() {
   return color;
 }
 
+// TODO decide how to present the stars with line
 //stars with line connected expand from mouse
 function star1(x, y, diameter) {
   locationx = [x, x + 40, x + 64, x + 72, x + 68];
   locationy = [y, y + 8, y + 24, y - 8, y - 24];
 
   stroke(251, 255, 138);
-  for (i = 0; i < 6; i++){
+  for (i = 0; i < 6; i++) {
     line(locationx[i], locationy[i], locationx[i + 1], locationy[i + 1]);
     circle(locationx[i], locationy[i], diameter);
   }
@@ -186,12 +198,14 @@ function randomstars(x, y) {
   }
 }
 
-
+// TODO find out how to make a burning star moving with mouse
 function shiningstar(x, y, diameter) {
   stroke(253, 221, 42);
   circle(x, y, diameter);
 }
 
+
+// TODO vary the sound(cello sound maybe)
 function playOscillator() {
   // starting an oscillator on a user gesture will enable audio
   freq = constrain(map(mouseX, 0, width, 100, 500), 100, 500);
