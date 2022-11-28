@@ -8,6 +8,7 @@ let wavecolor;
 let osc;
 let freq;
 let spand = 1;
+let button;
 
 //TODO nicer UI
 
@@ -15,9 +16,18 @@ function preload() {
   song = loadSound('source/The Christmas song.mp4');
 }
 
+
 function setup() {
   let cnv = createCanvas(windowWidth, windowHeight); //window size
-  background(0, 37, 106);
+
+  // button = createButton("play");
+  // button.style('font-size', '20px');
+  // button.style('background-color', "white");
+  // button.style('padding', "6px 10px");
+  // button.position(10,10);
+  // button.mousePressed(togglePlaying);
+
+  background(49, 88, 141);
   amplitude = new p5.Amplitude();
   fft = new p5.FFT();
   waveform = fft.waveform();
@@ -32,29 +42,49 @@ function setup() {
   //pause text
   //textFont(font);
   textAlign(CENTER, CENTER);
-  textSize(30);
+  textSize(20);
 }
 
 function draw() {
   if (!isdrawing) {
     // TODO change instructions style
     frameRate(10);
-    background(0, 37, 106);
-    if(spand > 50){
+    background(6, 47, 103);
+    if (spand > 50) {
       spand = 1;
-    }else{
-      spand = spand += 5;
+    } else {
+      spand += 3;
     }
     textNeon(
-      'Press the Space key and Play with clicking',
+      'Play/Pause with Space key',
       width / 2,
       height / 2,
       color(255, 250, 157),
       spand
     );
+    textNeon(
+      '&',
+      width / 2,
+      height / 2 + 40,
+      color(255, 250, 157),
+      spand
+    );
+    textNeon(
+      'Add sounds with clicking',
+      width / 2,
+      height / 2 + 70,
+      color(255, 250, 157),
+      spand
+    );
+    textNeon(
+      'And see what happens with key "Z" and "X"',
+      width / 2,
+      height / 2 + 100,
+      color(255, 250, 157),
+      spand
+    );
   } else {
     frameRate(24);
-    //background(0,37,106);
     let xoff = 0;
     fill(wavecolor);
     //remove blur from waves
@@ -66,13 +96,14 @@ function draw() {
     if (peakDetect.isDetected) {
       //console.log('peak');
       wavecolor = changeWaveColor();
+      // TODO when it reaches the bottom change direction
       changeHeight();
     }
     // We are going to draw a polygon out of the wave points
     beginShape();
     let level = amplitude.getLevel() * 5;
     // Iterate over horizontal pixels
-    for (let x = 0; x <= width; x += 10) {
+    for (let x = 0; x <= width + 20; x += 10) {
       // Calculate a y value according to noise, map to
 
       let y = map(noise(xoff, level), 0, 1, waveheight, waveheight + 200); //let y = map(noise(xoff, yoff), 0, 1, 200, 300);
@@ -84,7 +115,7 @@ function draw() {
     }
 
     // increment y dimension for noise
-    yoff += 0.01;
+    //yoff += 0.01;
     vertex(width, height);
     vertex(0, height);
     endShape(CLOSE);
@@ -100,18 +131,16 @@ function draw() {
     // }
 
     let diameter = map(level, 0, 1, 0, 40);
+    starcolor = color(253, 255, 170);
+    starcolor.setAlpha(128 + 128 * sin(millis() / 1000));
+    shiningsign(diameter, starcolor);
+
   }
 }
-// wave as circle 1017
-// for (var i = 0; i < wave.length; i++) {
-//   //for each element of the waveform map it to screen
-//   //coordinates and make a new vertex at the point.
-//   var x = map(i, 0, wave.length, 0, width) * cos(i);
-//   var y = map(wave[i], -1, 1, 0, height) * sin(i);
 
-//   vertex(x, y);
-// }
-// wave as circle 1017
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
 
 //Start & Pause
 function keyPressed() {
@@ -124,15 +153,32 @@ function keyPressed() {
       background(0, 37, 106);
       isdrawing = true;
       song.play();
-      //amplitude = new p5.Amplitude();
       amplitude.setInput(song);
-      //fft = new p5.FFT();
-      //peakDetect = new p5.PeakDetect(2500,4000);
     }
   } else if (keyCode === 90) {
     // keyboard Z
+    let stardiameter = amplitude.getLevel() * 100;
+    star1(mouseX, mouseY, stardiameter, "left");
 
+  } else if (keyCode === 88) {
+    // keyboard X
+    let stardiameter = amplitude.getLevel() * 100;
+    // setTimeout(star1(mouseX, mouseY, stardiameter, "right"),1000);
+    star1(mouseX, mouseY, stardiameter, "right");
+  }
+}
 
+//play/pause song
+function togglePlaying() {
+  if (song.isPlaying()) {
+    background(0, 37, 106);
+    song.pause();
+    isdrawing = false;
+  } else {
+    background(0, 37, 106);
+    isdrawing = true;
+    song.play();
+    amplitude.setInput(song);
   }
 }
 
@@ -153,40 +199,80 @@ function mousePressed() {
 //TODO comes back up when it reaches the bottom
 //change mapping height of waves
 function changeHeight() {
+  if (waveheight > windowHeight) {
+    waveheight = 200;
+  }
   waveheight += 20;
 }
 
 //change filled color of waves
 function changeWaveColor() {
-  h = 240;
-  s = Math.floor(Math.random() * 100);
-  l = Math.floor(Math.random() * 100);
-  let color = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
+  h = 215;
+  //s = Math.floor(Math.random() * 100);
+  l = random(20, 60);
+  let color = 'hsl(' + h + ', 80%, ' + l + '%)';
   return color;
 }
 
 // TODO decide how to present the stars with line
 //stars with line connected expand from mouse
-function star1(x, y, diameter) {
-  locationx = [x, x + 40, x + 64, x + 72, x + 68];
-  locationy = [y, y + 8, y + 24, y - 8, y - 24];
-
+function star1(x, y, diameter, direction) {
+  locationx = [x];
+  locationy = [y];
+  if (direction == "right") {
+    for (i = 0; i < 5; i++) {
+      let valuex = random(5, 20);
+      locationx.push(locationx[i] + valuex);
+    }
+  } else {
+    for (i = 0; i < 5; i++) {
+      let valuex = random(-5, -20);
+      locationx.push(locationx[i] + valuex);
+    }
+  }
+  for (i = 0; i < 5; i++) {
+    let valuey = random(-30, 30);
+    locationy.push(y + valuey)
+  }
   stroke(251, 255, 138);
   for (i = 0; i < 6; i++) {
+    starcolor = color(246, 231, 47);
+    //starcolor.setAlpha(128 + 128 * sin(millis() / 1000));
+    stroke(starcolor);
     line(locationx[i], locationy[i], locationx[i + 1], locationy[i + 1]);
+    fill(starcolor);
+    noStroke();
     circle(locationx[i], locationy[i], diameter);
   }
 }
 
-//random stars with stoke only spreading from mouse
+function shiningsign(diameter, c) {
+  x = random(-50, width);
+  y = random(0, 300);
+  locationx = [x];
+  locationy = [y];
+  for (i = 0; i < 5; i++) {
+    let valuex = random(5, 20);
+    locationx.push(locationx[i] + valuex);
+  }
+  for (i = 0; i < 5; i++) {
+    let valuey = random(-30, 30);
+    locationy.push(y + valuey)
+  }
+  fill(c);
+  noStroke();
+  circle(locationx[i], locationy[i], diameter);
+}
+
+//random stars with spreading from mouse
 function randomstars(x, y) {
   let positionx = [];
   let positiony = [];
   positionx[0] = x;
   positiony[0] = y;
   stroke(251, 255, 138);
-  //set 8 stars positions
-  for (i = 1; i < 8; i++) {
+  //set stars positions
+  for (i = 1; i < 3; i++) {
     positionx[i] = x * Math.random();
     positiony[i] = x * Math.random();
   }
