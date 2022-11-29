@@ -236,7 +236,7 @@ function star1(x, y, diameter, direction) {
   }
   stroke(251, 255, 138);
   for (i = 0; i < 6; i++) {
-    starcolor = color(246, 231, 47);
+    starcolor = color("black");//color(246, 231, 47);
     //starcolor.setAlpha(128 + 128 * sin(millis() / 1000));
     stroke(starcolor);
     line(locationx[i], locationy[i], locationx[i + 1], locationy[i + 1]);
