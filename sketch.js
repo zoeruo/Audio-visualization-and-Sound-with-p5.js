@@ -9,44 +9,117 @@ let osc;
 let freq;
 let spand = 1;
 let button;
+let cnv;
+let lineX = 0;
+let speed = 10;
+
 
 //TODO nicer UI
-
 function preload() {
   song = loadSound('source/The Christmas song.mp4');
 }
 
+// let canvas1 = function(p){
+//   p.setup = function(){
+//     p.createCanvas(windowWidth, 500); //window size
+//     bgcolor = color(6, 47, 103);
+//     p.background(bgcolor);
+
+
+
+//   }
+//   p.draw = function(){
+//     bgcolor_r = map(mouseY, 0, height, 104, 19);
+//     bgcolor_g = map(mouseY, 0, height, 190, 35);
+//     bgcolor_b = map(mouseY, 0, height, 255, 47);
+//     bgcolor = color(bgcolor_r, bgcolor_g, bgcolor_b);
+//     //wave
+//     let xoff = 0;
+//     p.fill(bgcolor);//fill(wavecolor);;
+//     p.stroke(0, 0, 0);
+//     p.strokeWeight(1);
+//     fft.analyze();
+//     peakDetect.update(fft);
+//     if (peakDetect.isDetected) {
+//       wavecolor = changeWaveColor();
+//       // TODO when it reaches the bottom change direction
+//       changeHeight();
+//     }
+//     // We are going to draw a polygon out of the wave points
+//     p.beginShape();
+//     let level = amplitude.getLevel() * 5;
+//     for (let x = 0; x <= width + 20; x += 10) {
+//       let y = map(noise(xoff, level), 0, 1, waveheight, waveheight + 200);
+//       p.vertex(x, y);
+//       xoff += 0.05;
+//     }
+
+//     p.vertex(width, height);
+//     p.vertex(0, height);
+//     endShape(CLOSE);
+
+//     // 1024
+//     let spectrum = fft.analyze();
+//     //noStroke();
+//     fill(255, 225, 140);
+//     for (let i = 0; i < spectrum.length; i++) {
+//       let x = map(i, 0, spectrum.length, 0, width);
+//       let h = -height + map(spectrum[i], 0, 255, height, 0);
+//       circle(windowWidth / 4, 200, spectrum[i] * 0.1);
+//       circle(windowWidth / 3, 120, spectrum[i] * 0.08);
+//       circle(windowWidth / 3 * 2, 30, spectrum[i] * 0.04);
+//       circle(windowWidth / 5 * 4, 190, spectrum[i] * 0.11);
+//       circle(windowWidth / 2, 130, spectrum[i] * 0.08);
+//       circle(windowWidth / 9, 230, spectrum[i] * 0.08);
+//       //rect(x, height, width / spectrum.length, h )
+//     }
+
+
+//     let diameter = map(level, 0, 1, 0, 40);
+//     starcolor = color(253, 255, 170);
+//     starcolor.setAlpha(128 + 128 * sin(millis() / 1000));
+
+//   }
+
+// }
 
 function setup() {
-  let cnv = createCanvas(windowWidth, windowHeight); //window size
+  cnv = createCanvas(windowWidth, 500); //window size
+  cnv.parent("c1");
+  bgcolor = color(6, 47, 103);
+  background(bgcolor);
 
-  // button = createButton("play");
-  // button.style('font-size', '20px');
-  // button.style('background-color', "white");
-  // button.style('padding', "6px 10px");
-  // button.position(10,10);
-  // button.mousePressed(togglePlaying);
-
-  background(49, 88, 141);
   amplitude = new p5.Amplitude();
   fft = new p5.FFT();
   waveform = fft.waveform();
   peakDetect = new p5.PeakDetect(2000, 4000); //2500-4000 frequency as peak
-  //cnv.mousePressed(canvasPressed);
   time = millis();
   wavecolor = color(0, 37, 106);
-  //cnv.mousePressed(playOscillator);
   osc = new p5.Oscillator('sine');
   let spand = 0.1;
 
-  //pause text
   //textFont(font);
-  textAlign(CENTER, CENTER);
-  textSize(20);
+  // textAlign(CENTER, CENTER);
+  // textSize(14);
+
+  //instruction div 12/7
+  let divinstruction = createDiv('');
+  divinstruction.html('Play / Pause with Space Key&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;Add sounds with Clicking&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;Move your Mouse');
+  divinstruction.position(0, 0);
+  divinstruction.style('font-family', 'Zen Dots');
+  divinstruction.style('font-size', '12px');
+  divinstruction.style('width', '100%');
+  divinstruction.style('text-align', 'center');
+  divinstruction.style('color', 'white');
+  divinstruction.style('background-color', 'rgba(253, 182, 166, .2)');
+  divinstruction.style('padding', '15px 0');
+  divinstruction.style('opacity', 0.6);
+
 }
 
 function draw() {
   if (!isdrawing) {
+
     // TODO change instructions style
     frameRate(10);
     background(6, 47, 103);
@@ -55,42 +128,54 @@ function draw() {
     } else {
       spand += 3;
     }
-    textNeon(
-      'Play/Pause with Space key',
-      width / 2,
-      height / 2,
-      color(255, 250, 157),
-      spand
-    );
-    textNeon(
-      '&',
-      width / 2,
-      height / 2 + 40,
-      color(255, 250, 157),
-      spand
-    );
-    textNeon(
-      'Add sounds with clicking',
-      width / 2,
-      height / 2 + 70,
-      color(255, 250, 157),
-      spand
-    );
-    textNeon(
-      'And see what happens with key "Z" and "X"',
-      width / 2,
-      height / 2 + 100,
-      color(255, 250, 157),
-      spand
-    );
+    // textNeon(
+    //   'Play/Pause with Space key',
+    //   width / 2,
+    //   height / 2,
+    //   color(255, 250, 157),
+    //   spand
+    // );
+    // textNeon(
+    //   '&',
+    //   width / 2,
+    //   height / 2 + 40,
+    //   color(255, 250, 157),
+    //   spand
+    // );
+    // textNeon(
+    //   'Add sounds with clicking',
+    //   width / 2,
+    //   height / 2 + 70,
+    //   color(255, 250, 157),
+    //   spand
+    // );
+    // textNeon(
+    //   'And see what happens with key "Z" and "X"',
+    //   width / 2,
+    //   height / 2 + 100,
+    //   color(255, 250, 157),
+    //   spand
+    // );
   } else {
+
     frameRate(24);
+    //change background color with mouseY(day to night) 12/7
+    bgcolor_r = map(mouseY, 0, height, 104, 19);
+    bgcolor_g = map(mouseY, 0, height, 190, 35);
+    bgcolor_b = map(mouseY, 0, height, 255, 47);
+    bgcolor = color(bgcolor_r, bgcolor_g, bgcolor_b);
+    //background(bgcolor);
+
+    //meteor(0);
+
+    //wave
     let xoff = 0;
-    fill(wavecolor);
+    fill(bgcolor);//fill(wavecolor);
     //remove blur from waves
     drawingContext.shadowBlur = 0;
     //drawingContext.shadowColor = none;
     stroke(0, 0, 0);
+    strokeWeight(1);
     fft.analyze();
     peakDetect.update(fft);
     if (peakDetect.isDetected) {
@@ -121,25 +206,45 @@ function draw() {
     endShape(CLOSE);
 
     // 1024
-    // let spectrum = fft.analyze();
-    // noStroke();
-    // fill(255, 225, 140);
-    // for (let i = 0; i< spectrum.length; i++){
-    // let x = map(i, 0, spectrum.length, 0, width);
-    // let h = -height + map(spectrum[i], 0, 255, height, 0);
-    // rect(x, height, width / spectrum.length, h )
-    // }
+    let spectrum = fft.analyze();
+    //noStroke();
+    fill(255, 225, 140);
+    for (let i = 0; i < spectrum.length; i++) {
+      let x = map(i, 0, spectrum.length, 0, width);
+      let h = -height + map(spectrum[i], 0, 255, height, 0);
+      circle(windowWidth / 4, 200, spectrum[i] * 0.1);
+      circle(windowWidth / 3, 120, spectrum[i] * 0.08);
+      circle(windowWidth / 3 * 2, 30, spectrum[i] * 0.04);
+      circle(windowWidth / 5 * 4, 190, spectrum[i] * 0.11);
+      circle(windowWidth / 2, 130, spectrum[i] * 0.08);
+      circle(windowWidth / 9, 230, spectrum[i] * 0.08);
+      //rect(x, height, width / spectrum.length, h )
+    }
+
 
     let diameter = map(level, 0, 1, 0, 40);
     starcolor = color(253, 255, 170);
     starcolor.setAlpha(128 + 128 * sin(millis() / 1000));
-    shiningsign(diameter, starcolor);
+    //shiningsign(diameter, starcolor);
 
+
+
+
+
+    //circle(windowWidth/4, 200, diameter);
+
+    // if (keyIsPressed == true) {
+    //   if (keyCode === 39) {
+    //     setInterval(meteor(0), 1000);
+    //   }
+    // }
   }
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+  resizeCanvas(windowWidth, 500);
+  bgcolor = color(6, 47, 103);
+  background(bgcolor);
 }
 
 //Start & Pause
@@ -165,6 +270,8 @@ function keyPressed() {
     let stardiameter = amplitude.getLevel() * 100;
     // setTimeout(star1(mouseX, mouseY, stardiameter, "right"),1000);
     star1(mouseX, mouseY, stardiameter, "right");
+  } else if (keyCode === 39) {
+
   }
 }
 
@@ -199,7 +306,7 @@ function mousePressed() {
 //TODO comes back up when it reaches the bottom
 //change mapping height of waves
 function changeHeight() {
-  if (waveheight > windowHeight) {
+  if (waveheight > 500) {
     waveheight = 200;
   }
   waveheight += 20;
@@ -262,6 +369,7 @@ function shiningsign(diameter, c) {
   fill(c);
   noStroke();
   circle(locationx[i], locationy[i], diameter);
+  // ellipse(200, 200, (frameCount % 30)*10, 50);
 }
 
 //random stars with spreading from mouse
@@ -317,6 +425,26 @@ function glow(glowColor, blurriness) {
   drawingContext.shadowBlur = blurriness;
   drawingContext.shadowColor = glowColor;
 }
+
+function startmeteor() {
+  setInterval(meteor(0), 1000);
+}
+
+// function meteor(type) {
+//   background(6, 47, 103);
+//   if (type === 0) {
+//     strokeCap(ROUND);
+//     strokeWeight(6);
+//     stroke(239, 227, 243);
+//     line(lineX, 200, lineX + 100, 200);
+//     lineX = lineX + speed;
+//     if (lineX > width) {
+//       speed = -(speed);
+//     } else if (lineX + 100 < 0) {
+//       speed = 10;
+//     }
+//   }
+// }
 
 
 
