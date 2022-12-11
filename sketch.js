@@ -12,23 +12,86 @@ let button;
 let cnv;
 let lineX = 0;
 let speed = 10;
+let particles = [];
 
 
 //TODO nicer UI
 function preload() {
-  song = loadSound('source/The Christmas song.mp4');
+  song = loadSound('source/Waiting - Andrew Langdon.mp3');
 }
 
-// let canvas1 = function(p){
-//   p.setup = function(){
+
+function setup() {
+  cnv = createCanvas(windowWidth, windowHeight); //window size
+  cnv.parent("c1");
+  bgcolor = color(6, 47, 103);
+  background(bgcolor);
+  cursor("source/Ellipse.png");
+
+  amplitude = new p5.Amplitude();
+  fft = new p5.FFT();
+  waveform = fft.waveform();
+  peakDetect = new p5.PeakDetect(300, 400); //2500-4000 frequency as peak
+  time = millis();
+  wavecolor = color(0, 37, 106);
+  osc = new p5.Oscillator('sine');
+  let spand = 0.1;
+
+  //textFont(font);
+  // textAlign(CENTER, CENTER);
+  // textSize(14);
+
+  //instruction div 12/7
+  let divinstruction = createDiv('');
+  divinstruction.html('Play / Pause with Space Key&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;Add sounds with Clicking&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;Move your Mouse');
+  divinstruction.position(0, 0);
+  divinstruction.style('font-family', 'Zen Dots');
+  divinstruction.style('font-size', '12px');
+  divinstruction.style('width', '100%');
+  divinstruction.style('text-align', 'center');
+  divinstruction.style('color', 'white');
+  divinstruction.style('background-color', 'rgba(49, 49, 51, .6)');
+  divinstruction.style('padding', '15px 0');
+  divinstruction.style('opacity', 0.8);
+
+  for (let i = 0; i < width / 10; i++) {
+    particles.push(new Constellation(waveheight + 150));
+  }
+
+}
+
+// let canvas1 = function (p) {
+//   p.setup = function () {
 //     p.createCanvas(windowWidth, 500); //window size
 //     bgcolor = color(6, 47, 103);
 //     p.background(bgcolor);
 
+//     amplitude = new p5.Amplitude();
+//     fft = new p5.FFT();
+//     waveform = fft.waveform();
+//     peakDetect = new p5.PeakDetect(2000, 4000); //2500-4000 frequency as peak
+//     time = millis();
+//     wavecolor = color(0, 37, 106);
+//     osc = new p5.Oscillator('sine');
+//     let spand = 0.1;
+
+//     //instruction div 12/7
+//     let divinstruction = createDiv('');
+//     divinstruction.html('Play / Pause with Space Key&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;Add sounds with Clicking&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;Move your Mouse');
+//     divinstruction.position(0, 0);
+//     divinstruction.style('font-family', 'Zen Dots');
+//     divinstruction.style('font-size', '12px');
+//     divinstruction.style('width', '100%');
+//     divinstruction.style('text-align', 'center');
+//     divinstruction.style('color', 'white');
+//     divinstruction.style('background-color', 'rgba(253, 182, 166, .2)');
+//     divinstruction.style('padding', '15px 0');
+//     divinstruction.style('opacity', 0.6);
+
 
 
 //   }
-//   p.draw = function(){
+//   p.draw = function () {
 //     bgcolor_r = map(mouseY, 0, height, 104, 19);
 //     bgcolor_g = map(mouseY, 0, height, 190, 35);
 //     bgcolor_b = map(mouseY, 0, height, 255, 47);
@@ -80,85 +143,49 @@ function preload() {
 //     starcolor.setAlpha(128 + 128 * sin(millis() / 1000));
 
 //   }
+//   p.windowResized = function () {
+//     p.resizeCanvas(windowWidth, 500);
+//     bgcolor = color(6, 47, 103);
+//     p.background(bgcolor);
+//   }
+//   p.keyPressed = function () {
+//     if (keyCode === 32) {
+//       if (song.isPlaying()) {
+//         p.background(0, 37, 106);
+//         song.pause();
+//         isdrawing = false;
+//       } else {
+//         p.background(0, 37, 106);
+//         isdrawing = true;
+//         song.play();
+//         amplitude.setInput(song);
+//       }
+//     } else if (keyCode === 90) {
+//       // keyboard Z
+//       let stardiameter = amplitude.getLevel() * 100;
+//       star1(mouseX, mouseY, stardiameter, "left");
 
+//     } else if (keyCode === 88) {
+//       // keyboard X
+//       let stardiameter = amplitude.getLevel() * 100;
+//       // setTimeout(star1(mouseX, mouseY, stardiameter, "right"),1000);
+//       star1(mouseX, mouseY, stardiameter, "right");
+//     } else if (keyCode === 39) {
+
+//     }
+//   }
+//   p.mousePressed = function () {
+//     randomstars(mouseX, mouseY);
+//     //star1(mouseX, mouseY, 2); 
+//     playOscillator();
+
+//   }
 // }
-
-function setup() {
-  cnv = createCanvas(windowWidth, 500); //window size
-  cnv.parent("c1");
-  bgcolor = color(6, 47, 103);
-  background(bgcolor);
-
-  amplitude = new p5.Amplitude();
-  fft = new p5.FFT();
-  waveform = fft.waveform();
-  peakDetect = new p5.PeakDetect(2000, 4000); //2500-4000 frequency as peak
-  time = millis();
-  wavecolor = color(0, 37, 106);
-  osc = new p5.Oscillator('sine');
-  let spand = 0.1;
-
-  //textFont(font);
-  // textAlign(CENTER, CENTER);
-  // textSize(14);
-
-  //instruction div 12/7
-  let divinstruction = createDiv('');
-  divinstruction.html('Play / Pause with Space Key&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;Add sounds with Clicking&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;Move your Mouse');
-  divinstruction.position(0, 0);
-  divinstruction.style('font-family', 'Zen Dots');
-  divinstruction.style('font-size', '12px');
-  divinstruction.style('width', '100%');
-  divinstruction.style('text-align', 'center');
-  divinstruction.style('color', 'white');
-  divinstruction.style('background-color', 'rgba(253, 182, 166, .2)');
-  divinstruction.style('padding', '15px 0');
-  divinstruction.style('opacity', 0.6);
-
-}
-
+// new p5(canvas1, 'c1');
 function draw() {
-  if (!isdrawing) {
+  if (isdrawing) {
+    //frameRate(40);
 
-    // TODO change instructions style
-    frameRate(10);
-    background(6, 47, 103);
-    if (spand > 50) {
-      spand = 1;
-    } else {
-      spand += 3;
-    }
-    // textNeon(
-    //   'Play/Pause with Space key',
-    //   width / 2,
-    //   height / 2,
-    //   color(255, 250, 157),
-    //   spand
-    // );
-    // textNeon(
-    //   '&',
-    //   width / 2,
-    //   height / 2 + 40,
-    //   color(255, 250, 157),
-    //   spand
-    // );
-    // textNeon(
-    //   'Add sounds with clicking',
-    //   width / 2,
-    //   height / 2 + 70,
-    //   color(255, 250, 157),
-    //   spand
-    // );
-    // textNeon(
-    //   'And see what happens with key "Z" and "X"',
-    //   width / 2,
-    //   height / 2 + 100,
-    //   color(255, 250, 157),
-    //   spand
-    // );
-  } else {
-
-    frameRate(24);
     //change background color with mouseY(day to night) 12/7
     bgcolor_r = map(mouseY, 0, height, 104, 19);
     bgcolor_g = map(mouseY, 0, height, 190, 35);
@@ -177,12 +204,13 @@ function draw() {
     stroke(0, 0, 0);
     strokeWeight(1);
     fft.analyze();
+    //console.log(peakDetect.update(fft));
     peakDetect.update(fft);
     if (peakDetect.isDetected) {
       //console.log('peak');
       wavecolor = changeWaveColor();
       // TODO when it reaches the bottom change direction
-      changeHeight();
+      //changeHeight();
     }
     // We are going to draw a polygon out of the wave points
     beginShape();
@@ -228,21 +256,34 @@ function draw() {
     //shiningsign(diameter, starcolor);
 
 
-
-
-
     //circle(windowWidth/4, 200, diameter);
 
     // if (keyIsPressed == true) {
     //   if (keyCode === 39) {
-    //     setInterval(meteor(0), 1000);
+    //     background(color(6, 47, 103));
     //   }
     // }
+
+    //particles
+    console.log(level);
+    for (let i = 0; i < particles.length; i++) {
+      particles[i].createConstellation();
+      particles[i].moveConstellation(waveheight + 150, level);
+      particles[i].joinConstellations(particles.slice(i));
+    }
+  } else {
+    // background(color(6, 47, 103));
+    // for (let i = 0; i < particles.length; i++) {
+    //   particles[i].createParticle();
+    //   particles[i].moveParticle(windowHeight);
+    //   particles[i].joinParticles(particles.slice(i));
+    // }
   }
+
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, 500);
+  resizeCanvas(windowWidth, windowHeight);
   bgcolor = color(6, 47, 103);
   background(bgcolor);
 }
@@ -295,18 +336,11 @@ function mousePressed() {
   playOscillator();
 }
 
-// function keyPressed() {
-//   if (keyCode === 90) {
-//     star1(diameter);
-//   } else if (keyCode === 88) {
-
-//   }
-// }
 
 //TODO comes back up when it reaches the bottom
 //change mapping height of waves
 function changeHeight() {
-  if (waveheight > 500) {
+  if (waveheight > windowHeight) {
     waveheight = 200;
   }
   waveheight += 20;
@@ -445,6 +479,8 @@ function startmeteor() {
 //     }
 //   }
 // }
+
+
 
 
 
