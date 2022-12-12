@@ -13,11 +13,15 @@ let cnv;
 let lineX = 0;
 let speed = 10;
 let particles = [];
+let particlesbg = [];
+let trigger = false;
+let vibrations = [];
+let ripple = new Ripple(200, 200);;
 
 
 //TODO nicer UI
 function preload() {
-  song = loadSound('source/Waiting - Andrew Langdon.mp3');
+  song = loadSound('source/Waiting - Andrew Langdon.mp3');//loadSound('source/Waiting - Andrew Langdon.mp3');
 }
 
 
@@ -43,7 +47,7 @@ function setup() {
 
   //instruction div 12/7
   let divinstruction = createDiv('');
-  divinstruction.html('Play / Pause with Space Key&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;Add sounds with Clicking&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;Move your Mouse');
+  divinstruction.html('Play / Pause with spacebar&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;Add sounds with Clicking and Pressing following keys : z,x,c,v,b&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;Move your Mouse');
   divinstruction.position(0, 0);
   divinstruction.style('font-family', 'Zen Dots');
   divinstruction.style('font-size', '12px');
@@ -56,6 +60,10 @@ function setup() {
 
   for (let i = 0; i < width / 10; i++) {
     particles.push(new Constellation(waveheight + 150));
+  }
+
+  for (let i = 0; i < width / 20; i++) {
+    particlesbg.push(new Constellation(0));
   }
 
 }
@@ -192,8 +200,11 @@ function draw() {
     bgcolor_b = map(mouseY, 0, height, 255, 47);
     bgcolor = color(bgcolor_r, bgcolor_g, bgcolor_b);
     //background(bgcolor);
+    for (let i = 0; i < vibrations.length; i++) {
+      vibrations[i].show();
+      vibrations[i].update();
+    }
 
-    //meteor(0);
 
     //wave
     let xoff = 0;
@@ -238,15 +249,12 @@ function draw() {
     //noStroke();
     fill(255, 225, 140);
     for (let i = 0; i < spectrum.length; i++) {
-      let x = map(i, 0, spectrum.length, 0, width);
-      let h = -height + map(spectrum[i], 0, 255, height, 0);
       circle(windowWidth / 4, 200, spectrum[i] * 0.1);
       circle(windowWidth / 3, 120, spectrum[i] * 0.08);
-      circle(windowWidth / 3 * 2, 30, spectrum[i] * 0.04);
+      // circle(windowWidth / 3 * 2, 30, spectrum[i] * 0.04);
       circle(windowWidth / 5 * 4, 190, spectrum[i] * 0.11);
-      circle(windowWidth / 2, 130, spectrum[i] * 0.08);
-      circle(windowWidth / 9, 230, spectrum[i] * 0.08);
-      //rect(x, height, width / spectrum.length, h )
+      // circle(windowWidth / 2, 130, spectrum[i] * 0.08);
+      // circle(windowWidth / 9, 230, spectrum[i] * 0.08);
     }
 
 
@@ -265,19 +273,26 @@ function draw() {
     // }
 
     //particles
-    console.log(level);
+    //console.log(level);
     for (let i = 0; i < particles.length; i++) {
       particles[i].createConstellation();
-      particles[i].moveConstellation(waveheight + 150, level);
+      particles[i].moveConstellation(waveheight + 150);
       particles[i].joinConstellations(particles.slice(i));
     }
+
   } else {
-    // background(color(6, 47, 103));
-    // for (let i = 0; i < particles.length; i++) {
-    //   particles[i].createParticle();
-    //   particles[i].moveParticle(windowHeight);
-    //   particles[i].joinParticles(particles.slice(i));
-    // }
+    frameRate(20);
+    background(color(6, 47, 103));
+    for (let i = 0; i < particlesbg.length; i++) {
+      particlesbg[i].createConstellation();
+      particlesbg[i].moveConstellation(0);
+    }
+
+    for (let i = 0; i < vibrations.length; i++) {
+      vibrations[i].show();
+      vibrations[i].update();
+    }
+    //ripple.show();
   }
 
 }
@@ -301,18 +316,59 @@ function keyPressed() {
       song.play();
       amplitude.setInput(song);
     }
-  } else if (keyCode === 90) {
+  } else if (keyCode === 190) {
     // keyboard Z
     let stardiameter = amplitude.getLevel() * 100;
     star1(mouseX, mouseY, stardiameter, "left");
 
-  } else if (keyCode === 88) {
+  } else if (keyCode === 191) {
     // keyboard X
     let stardiameter = amplitude.getLevel() * 100;
     // setTimeout(star1(mouseX, mouseY, stardiameter, "right"),1000);
     star1(mouseX, mouseY, stardiameter, "right");
-  } else if (keyCode === 39) {
+  } else if (keyCode === 66) {
+    //TODO 鍵盤對應幾個固定聲響
+    //A
+    osc.freq(415.3047);
+    osc.amp(amp, 0.1);
+    osc.start();
+    osc.amp(0, 0.5);
+    osc.stop(2);
+    if (!song.isPlaying()) {
+      vibrations.push(new Meteor(random(0, 150), random(height + 100, height)));
+    }
 
+
+  } else if (keyCode === 86) {
+    //G
+    osc.freq(391.9954);
+    osc.amp(amp, 0.1);
+    osc.start();
+    osc.amp(0, 0.5);
+    osc.stop(2);
+  }
+  else if (keyCode === 67) {
+    //-E
+    osc.freq(311.1270);
+    osc.amp(amp, 0.1);
+    osc.start();
+    osc.amp(0, 0.5);
+    osc.stop(2);
+  } else if (keyCode === 88) {
+    //-D
+    osc.freq(277.1826);
+    osc.amp(amp, 0.1);
+    osc.start();
+    osc.amp(0, 0.5);
+    osc.stop(2);
+  }
+  else if (keyCode === 90) {
+    //C
+    osc.freq(261.6256);
+    osc.amp(amp, 0.1);
+    osc.start();
+    osc.amp(0, 0.5);
+    osc.stop(2);
   }
 }
 
@@ -460,25 +516,22 @@ function glow(glowColor, blurriness) {
   drawingContext.shadowColor = glowColor;
 }
 
-function startmeteor() {
-  setInterval(meteor(0), 1000);
+//流星
+function meteor(type) {
+  if (type === 0) {
+    strokeCap(ROUND);
+    strokeWeight(1);
+    stroke(239, 227, 243);
+    line(lineX, 200, lineX + 100, 200);
+    lineX = lineX + speed;
+    if (lineX > width) {
+      trigger = false;
+      //speed = -(speed);
+    } else if (lineX + 100 < 0) {
+      speed = 10;
+    }
+  }
 }
-
-// function meteor(type) {
-//   background(6, 47, 103);
-//   if (type === 0) {
-//     strokeCap(ROUND);
-//     strokeWeight(6);
-//     stroke(239, 227, 243);
-//     line(lineX, 200, lineX + 100, 200);
-//     lineX = lineX + speed;
-//     if (lineX > width) {
-//       speed = -(speed);
-//     } else if (lineX + 100 < 0) {
-//       speed = 10;
-//     }
-//   }
-// }
 
 
 
