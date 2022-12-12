@@ -127,10 +127,10 @@ function draw() {
     //noStroke();
     fill(255, 225, 140);
     for (let i = 0; i < spectrum.length; i++) {
-      circle(windowWidth / 4, 200, spectrum[i] * 0.1);
-      circle(windowWidth / 3, 120, spectrum[i] * 0.08);
+      circle(windowWidth / 4, 200, spectrum[i] * 0.12);
+      circle(windowWidth / 3, 120, spectrum[i] * 0.23);
       // circle(windowWidth / 3 * 2, 30, spectrum[i] * 0.04);
-      circle(windowWidth / 5 * 4, 190, spectrum[i] * 0.11);
+      circle(windowWidth / 5 * 4, 190, spectrum[i] * 0.19);
       // circle(windowWidth / 2, 130, spectrum[i] * 0.08);
       // circle(windowWidth / 9, 230, spectrum[i] * 0.08);
     }
