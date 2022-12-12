@@ -26,8 +26,11 @@ class Constellation {
     // setting the Constellation in motion and change color.
     moveConstellation(mxh, trigger) {
         if (trigger == 1) {
-            this.xSpeed += 10;
-            this.ySpeed += 10;
+            this.xSpeed *= -1;
+            this.ySpeed *= -1;
+            // this.r = 8; 
+        } else if (trigger == 2) {
+            this.r = random(1, 4);
         }
         if (this.x < 0 || this.x > width)
             this.xSpeed *= -1;
@@ -62,6 +65,9 @@ class Constellation {
 
 }
 
+
+
+
 class Meteor {
 
     constructor(x, y) {
@@ -85,7 +91,7 @@ class Meteor {
     }
 
     show() {
-        stroke(161,245,254);
+        stroke(161, 245, 254);
         //stroke(148, 255, 253, 240);
         beginShape();
         for (let i = 0; i < this.history.length; i++) {
@@ -96,15 +102,133 @@ class Meteor {
         }
 
         noStroke();
-        fill(161,245,254);
+        fill(161, 245, 254);
         //fill(148, 255, 253, 240);
         ellipse(this.x, this.y, 1, 1);
     }
 }
 
+
+class AMeteor {
+
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.history = [];
+    }
+
+    update() {
+        this.x = this.x + (4);
+        this.y = this.y + (1);
+
+        let v = createVector(this.x, this.y);
+
+        this.history.push(v);
+        //console.log(this.history.length);
+
+        if (this.history.length > 8) {
+            this.history.splice(0, 1);
+        }
+    }
+
+    show() {
+        stroke(253, 255, 110, 50);
+        beginShape();
+        for (let i = 0; i < this.history.length; i++) {
+            let pos = this.history[i];
+            noFill();
+            vertex(pos.x, pos.y);
+            endShape();
+        }
+
+        noStroke();
+        fill(253, 255, 110);
+        ellipse(this.x, this.y, 1, 1);
+    }
+}
+
+class BMeteor {
+
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.history = [];
+    }
+
+    update() {
+        this.x = this.x + (4);
+        this.y = this.y + (-3);
+
+        let v = createVector(this.x, this.y);
+
+        this.history.push(v);
+        //console.log(this.history.length);
+
+        if (this.history.length > 20) {
+            this.history.splice(0, 1);
+        }
+    }
+
+    show() {
+        stroke(156, 108, 255, 80);
+        beginShape();
+        for (let i = 0; i < this.history.length; i++) {
+            let pos = this.history[i];
+            noFill();
+            vertex(pos.x, pos.y);
+            endShape();
+        }
+
+        noStroke();
+        fill(156, 108, 255);
+        ellipse(this.x, this.y, 1, 1);
+    }
+}
+
+class CMeteor {
+
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.history = [];
+    }
+
+    update() {
+        this.x = this.x + (-8);
+        this.y = this.y + (6);
+
+        let v = createVector(this.x, this.y);
+
+        this.history.push(v);
+        //console.log(this.history.length);
+
+        if (this.history.length > 12) {
+            this.history.splice(0, 1);
+        }
+    }
+
+    show() {
+        stroke(253, 227, 173, 80);
+        beginShape();
+        for (let i = 0; i < this.history.length; i++) {
+            let pos = this.history[i];
+            noFill();
+            vertex(pos.x, pos.y);
+            endShape();
+        }
+
+        noStroke();
+        fill(253, 227, 173, 80);
+        ellipse(this.x, this.y, 1, 1);
+    }
+}
+
+
+
+
 class Ripple {
 
-    constructor(x,y) {
+    constructor(x, y) {
         this.x = x;
         this.y = y;
         this.outerDiam = 0

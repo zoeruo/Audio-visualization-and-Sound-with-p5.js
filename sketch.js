@@ -68,128 +68,6 @@ function setup() {
 
 }
 
-// let canvas1 = function (p) {
-//   p.setup = function () {
-//     p.createCanvas(windowWidth, 500); //window size
-//     bgcolor = color(6, 47, 103);
-//     p.background(bgcolor);
-
-//     amplitude = new p5.Amplitude();
-//     fft = new p5.FFT();
-//     waveform = fft.waveform();
-//     peakDetect = new p5.PeakDetect(2000, 4000); //2500-4000 frequency as peak
-//     time = millis();
-//     wavecolor = color(0, 37, 106);
-//     osc = new p5.Oscillator('sine');
-//     let spand = 0.1;
-
-//     //instruction div 12/7
-//     let divinstruction = createDiv('');
-//     divinstruction.html('Play / Pause with Space Key&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;Add sounds with Clicking&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;Move your Mouse');
-//     divinstruction.position(0, 0);
-//     divinstruction.style('font-family', 'Zen Dots');
-//     divinstruction.style('font-size', '12px');
-//     divinstruction.style('width', '100%');
-//     divinstruction.style('text-align', 'center');
-//     divinstruction.style('color', 'white');
-//     divinstruction.style('background-color', 'rgba(253, 182, 166, .2)');
-//     divinstruction.style('padding', '15px 0');
-//     divinstruction.style('opacity', 0.6);
-
-
-
-//   }
-//   p.draw = function () {
-//     bgcolor_r = map(mouseY, 0, height, 104, 19);
-//     bgcolor_g = map(mouseY, 0, height, 190, 35);
-//     bgcolor_b = map(mouseY, 0, height, 255, 47);
-//     bgcolor = color(bgcolor_r, bgcolor_g, bgcolor_b);
-//     //wave
-//     let xoff = 0;
-//     p.fill(bgcolor);//fill(wavecolor);;
-//     p.stroke(0, 0, 0);
-//     p.strokeWeight(1);
-//     fft.analyze();
-//     peakDetect.update(fft);
-//     if (peakDetect.isDetected) {
-//       wavecolor = changeWaveColor();
-//       // TODO when it reaches the bottom change direction
-//       changeHeight();
-//     }
-//     // We are going to draw a polygon out of the wave points
-//     p.beginShape();
-//     let level = amplitude.getLevel() * 5;
-//     for (let x = 0; x <= width + 20; x += 10) {
-//       let y = map(noise(xoff, level), 0, 1, waveheight, waveheight + 200);
-//       p.vertex(x, y);
-//       xoff += 0.05;
-//     }
-
-//     p.vertex(width, height);
-//     p.vertex(0, height);
-//     endShape(CLOSE);
-
-//     // 1024
-//     let spectrum = fft.analyze();
-//     //noStroke();
-//     fill(255, 225, 140);
-//     for (let i = 0; i < spectrum.length; i++) {
-//       let x = map(i, 0, spectrum.length, 0, width);
-//       let h = -height + map(spectrum[i], 0, 255, height, 0);
-//       circle(windowWidth / 4, 200, spectrum[i] * 0.1);
-//       circle(windowWidth / 3, 120, spectrum[i] * 0.08);
-//       circle(windowWidth / 3 * 2, 30, spectrum[i] * 0.04);
-//       circle(windowWidth / 5 * 4, 190, spectrum[i] * 0.11);
-//       circle(windowWidth / 2, 130, spectrum[i] * 0.08);
-//       circle(windowWidth / 9, 230, spectrum[i] * 0.08);
-//       //rect(x, height, width / spectrum.length, h )
-//     }
-
-
-//     let diameter = map(level, 0, 1, 0, 40);
-//     starcolor = color(253, 255, 170);
-//     starcolor.setAlpha(128 + 128 * sin(millis() / 1000));
-
-//   }
-//   p.windowResized = function () {
-//     p.resizeCanvas(windowWidth, 500);
-//     bgcolor = color(6, 47, 103);
-//     p.background(bgcolor);
-//   }
-//   p.keyPressed = function () {
-//     if (keyCode === 32) {
-//       if (song.isPlaying()) {
-//         p.background(0, 37, 106);
-//         song.pause();
-//         isdrawing = false;
-//       } else {
-//         p.background(0, 37, 106);
-//         isdrawing = true;
-//         song.play();
-//         amplitude.setInput(song);
-//       }
-//     } else if (keyCode === 90) {
-//       // keyboard Z
-//       let stardiameter = amplitude.getLevel() * 100;
-//       star1(mouseX, mouseY, stardiameter, "left");
-
-//     } else if (keyCode === 88) {
-//       // keyboard X
-//       let stardiameter = amplitude.getLevel() * 100;
-//       // setTimeout(star1(mouseX, mouseY, stardiameter, "right"),1000);
-//       star1(mouseX, mouseY, stardiameter, "right");
-//     } else if (keyCode === 39) {
-
-//     }
-//   }
-//   p.mousePressed = function () {
-//     randomstars(mouseX, mouseY);
-//     //star1(mouseX, mouseY, 2); 
-//     playOscillator();
-
-//   }
-// }
-// new p5(canvas1, 'c1');
 function draw() {
   if (isdrawing) {
     //frameRate(40);
@@ -276,7 +154,10 @@ function draw() {
     //console.log(level);
     for (let i = 0; i < particles.length; i++) {
       particles[i].createConstellation();
-      particles[i].moveConstellation(waveheight + 150);
+      if (keyIsDown(90) || keyIsDown(66) || keyIsDown(67) || keyIsDown(86) || keyIsDown(88)) {
+        particles[i].moveConstellation(waveheight + 150, 1);
+      }
+      particles[i].moveConstellation(waveheight + 150, 0);
       particles[i].joinConstellations(particles.slice(i));
     }
 
@@ -285,6 +166,10 @@ function draw() {
     background(color(6, 47, 103));
     for (let i = 0; i < particlesbg.length; i++) {
       particlesbg[i].createConstellation();
+      if (keyIsDown(90)) {
+        particlesbg[i].moveConstellation(0, 2);
+      }
+
       particlesbg[i].moveConstellation(0);
     }
 
@@ -330,10 +215,11 @@ function keyPressed() {
     //TODO 鍵盤對應幾個固定聲響
     //A
     osc.freq(415.3047);
-    osc.amp(amp, 0.1);
+    osc.amp(1, 0.1);
     osc.start();
     osc.amp(0, 0.5);
     osc.stop(2);
+
     if (!song.isPlaying()) {
       vibrations.push(new Meteor(random(0, 150), random(height + 100, height)));
     }
@@ -342,30 +228,44 @@ function keyPressed() {
   } else if (keyCode === 86) {
     //G
     osc.freq(391.9954);
-    osc.amp(amp, 0.1);
+    osc.amp(1, 0.1);
     osc.start();
     osc.amp(0, 0.5);
     osc.stop(2);
+
+    if (!song.isPlaying()) {
+      vibrations.push(new AMeteor(random(0, 50), random(20, 80)));
+      vibrations.push(new AMeteor(random(0, 50), random(20, 80)));
+      vibrations.push(new AMeteor(random(0, 50), random(20, 80)));
+    }
   }
   else if (keyCode === 67) {
     //-E
     osc.freq(311.1270);
-    osc.amp(amp, 0.1);
+    osc.amp(1, 0.1);
     osc.start();
     osc.amp(0, 0.5);
     osc.stop(2);
-  } else if (keyCode === 88) {
+    if (!song.isPlaying()) {
+      vibrations.push(new BMeteor(random(-10, 0), random(height - 100, height - 50)));
+    }
+  }
+  else if (keyCode === 88) {
     //-D
     osc.freq(277.1826);
-    osc.amp(amp, 0.1);
+    osc.amp(1, 0.1);
     osc.start();
     osc.amp(0, 0.5);
     osc.stop(2);
+    if (!song.isPlaying()) {
+      vibrations.push(new CMeteor(random(width, width + 100), random(70, 130)));
+      vibrations.push(new CMeteor(random(width, width + 100), random(70, 130)));
+    }
   }
   else if (keyCode === 90) {
     //C
     osc.freq(261.6256);
-    osc.amp(amp, 0.1);
+    osc.amp(1, 0.1);
     osc.start();
     osc.amp(0, 0.5);
     osc.stop(2);
