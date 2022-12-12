@@ -201,17 +201,19 @@ function keyPressed() {
       song.play();
       amplitude.setInput(song);
     }
-  } else if (keyCode === 190) {
-    // keyboard Z
-    let stardiameter = amplitude.getLevel() * 100;
-    star1(mouseX, mouseY, stardiameter, "left");
+  } 
+  // else if (keyCode === 190) {
+  //   // keyboard Z
+  //   let stardiameter = amplitude.getLevel() * 100;
+  //   star1(mouseX, mouseY, stardiameter, "left");
 
-  } else if (keyCode === 191) {
-    // keyboard X
-    let stardiameter = amplitude.getLevel() * 100;
-    // setTimeout(star1(mouseX, mouseY, stardiameter, "right"),1000);
-    star1(mouseX, mouseY, stardiameter, "right");
-  } else if (keyCode === 66) {
+  // } else if (keyCode === 191) {
+  //   // keyboard X
+  //   let stardiameter = amplitude.getLevel() * 100;
+  //   // setTimeout(star1(mouseX, mouseY, stardiameter, "right"),1000);
+  //   star1(mouseX, mouseY, stardiameter, "right");
+  // } 
+  else if (keyCode === 66) {
     //TODO 鍵盤對應幾個固定聲響
     //A
     osc.freq(415.3047);
